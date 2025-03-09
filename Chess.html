@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chess Game</title>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; }
+        .board { display: grid; grid-template-columns: repeat(8, 60px); width: 480px; margin: auto; }
+        .square { width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .white { background: #eee; }
+        .black { background: #666; color: white; }
+    </style>
+</head>
+<body>
+    <h1>Chess Game</h1>
+    <div class="board" id="chessboard"></div>
+    <script>
+        const pieces = {
+            'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚', 'p': '♟',
+            'R': '♖', 'N': '♘', 'B': '♗', 'Q': '♕', 'K': '♔', 'P': '♙'
+        };
+        let board = [
+            "rnbqkbnr",
+            "pppppppp",
+            "        ",
+            "        ",
+            "        ",
+            "        ",
+            "PPPPPPPP",
+            "RNBQKBNR"
+        ];
+
+        let selected = null;
+        const chessboard = document.getElementById("chessboard");
+
+        function drawBoard() {
+            chessboard.innerHTML = "";
+            board.forEach((row, y) => {
+                [...row].forEach((piece, x) => {
+                    let square = document.createElement("div");
+                    square.className = `square ${(x + y) % 2 ? 'black' : 'white'}`;
+                    square.dataset.x = x;
+                    square.dataset.y = y;
+                    square.textContent = pieces[piece] || "";
+                    square.onclick = () => movePiece(x, y);
+                    chessboard.appendChild(square);
+                });
+            });
+        }
+
+        function movePiece(x, y) {
+            if (selected) {
+                let [sx, sy] = selected;
+                board[y] = board[y].substr(0, x) + board[sy][sx] + board[y].substr(x + 1);
+                board[sy] = board[sy].substr(0, sx) + ' ' + board[sy].substr(sx + 1);
+                selected = null;
+                drawBoard();
+            } else if (board[y][x] !== ' ') {
+                selected = [x, y];
+            }
+        }
+
+        drawBoard();
+    </script>
+</body>
+</html>
